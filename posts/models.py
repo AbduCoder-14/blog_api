@@ -59,7 +59,8 @@ class Post(models.Model):
 
 class Vote(models.Model):
     voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="votes")
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return "{} - {}".format(self.voter, self.post)

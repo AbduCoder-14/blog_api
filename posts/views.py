@@ -1,12 +1,15 @@
 from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Post, Vote
+from .filters import VoteAnalyticsFilter
 from .serializers import (
     PostsListSerializer,
     PostSerializer,
     PostDetailSerializer,
     VoteSerializer,
+    VotesAnalyticsSerializer,
 )
 
 
@@ -61,3 +64,10 @@ class VoteCreateView(generics.CreateAPIView, mixins.DestroyModelMixin):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise ValidationError("You did not voted for this post")
+
+
+class VotesAnalyticsView(generics.ListAPIView):
+    queryset = Vote.objects.all()
+    serializer_class = VotesAnalyticsSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = VoteAnalyticsFilter

@@ -3,7 +3,7 @@ from .models import Profile
 from .serializers import UserCreateSerializer, GetProfileSerializer
 
 
-class UserCreateView(generics.CreateAPIView):
+class UserCreateView(generics.ListCreateAPIView):
     serializer_class = UserCreateSerializer
     queryset = Profile.objects.all()
 

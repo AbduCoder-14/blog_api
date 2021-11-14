@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "mptt",
     "rest_framework",
+    "django_filters",
     "rest_framework_simplejwt",
     "djoser",
     "rest_framework.authtoken",
@@ -58,6 +59,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # other middlewares
+    "accounts.middleware.UpdateLastActivityMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -156,4 +159,5 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }

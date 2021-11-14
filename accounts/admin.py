@@ -33,5 +33,8 @@ class UserNetAdmin(UserAdmin):
                 ),
             },
         ),
-        (("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (
+            ("Important dates"),
+            {"fields": ("last_login", "date_joined", "last_activity")},
+        ),
     )

@@ -39,3 +39,11 @@ class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
         fields = ("id",)
+
+
+class VotesAnalyticsSerializer(serializers.ModelSerializer):
+    post = serializers.SlugRelatedField(slug_field="title", read_only=True)
+
+    class Meta:
+        model = Vote
+        fields = ("post", "created_at")

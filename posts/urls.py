@@ -6,6 +6,7 @@ from .views import (
     PostDetailView,
     PostsListView,
     VoteCreateView,
+    VotesAnalyticsView,
 )
 
 
@@ -15,4 +16,5 @@ urlpatterns = [
     path("post/edit/<int:pk>/", PostRetrieveUpdateDestroyView.as_view()),
     path("post/<int:pk>/", PostDetailView.as_view()),
     path("post/<int:pk>/vote/", VoteCreateView.as_view()),
+    path("analytics/", VotesAnalyticsView.as_view()),
 ]

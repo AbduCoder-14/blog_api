@@ -11,3 +11,4 @@ class Profile(AbstractUser):
     rating = models.IntegerField(default=0)
     bio = models.TextField(blank=True)
     skills = models.CharField(max_length=255)
+    last_activity = models.DateTimeField()

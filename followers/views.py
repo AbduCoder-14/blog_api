@@ -1,8 +1,8 @@
-from rest_framework import generics, permissions, views, response
-from django.db import IntegrityError
-from django.shortcuts import get_object_or_404
+from rest_framework import generics, permissions, mixins, status
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from .models import Follower
-from .serializers import ListFollowerSerializer
+from .serializers import ListFollowerSerializer, FollowerSerializer
 from accounts.models import Profile
 
 
@@ -14,18 +14,25 @@ class ListFollowerView(generics.ListAPIView):
         return Follower.objects.filter(user=self.request.user)
 
 
-class FollowerView(views.APIView):
+class FollowerView(generics.CreateAPIView, mixins.DestroyModelMixin):
+    serializer_class = FollowerSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, pk):
-        user = get_object_or_404(Profile, id=pk)
-        try:
-            Follower.objects.create(subscriber=request.user, user=user)
-            return response.Response(status=201)
-        except IntegrityError:
-            return response.Response(status=201)
+    def get_queryset(self):
+        user = self.request.user
+        subscriber = Profile.objects.get(pk=self.kwargs["pk"])
+        return Follower.objects.filter(user=user, subscriber=subscriber)
 
-    def delete(self, request, pk):
-        sub = get_object_or_404(Follower, subscriber=request.user, user_id=pk)
-        sub.delete()
-        return response.Response(status=204)
+    def perform_create(self, serializer):
+        user = self.request.user
+        subscriber = Profile.objects.get(pk=self.kwargs["pk"])
+        if self.get_queryset().exists():
+            raise ValidationError("You have already followed for this user")
+        serializer.save(user=user, subscriber=subscriber)
+
+    def delete(self, request, *args, **kwargs):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError("You did not followed for this user")
