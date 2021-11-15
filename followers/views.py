@@ -19,16 +19,16 @@ class FollowerView(generics.CreateAPIView, mixins.DestroyModelMixin):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        subscriber = Profile.objects.get(pk=self.kwargs["pk"])
-        return Follower.objects.filter(user=user, subscriber=subscriber)
+        return Follower.objects.filter(
+            user=self.request.user, subscriber=Profile.objects.get(pk=self.kwargs["pk"])
+        )
 
     def perform_create(self, serializer):
-        user = self.request.user
-        subscriber = Profile.objects.get(pk=self.kwargs["pk"])
         if self.get_queryset().exists():
             raise ValidationError("You have already followed for this user")
-        serializer.save(user=user, subscriber=subscriber)
+        serializer.save(
+            user=self.request.user, subscriber=Profile.objects.get(pk=self.kwargs["pk"])
+        )
 
     def delete(self, request, *args, **kwargs):
         if self.get_queryset().exists():

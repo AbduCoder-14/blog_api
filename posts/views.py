@@ -46,16 +46,16 @@ class VoteCreateView(generics.CreateAPIView, mixins.DestroyModelMixin):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        post = Post.objects.get(pk=self.kwargs["pk"])
-        return Vote.objects.filter(voter=user, post=post)
+        return Vote.objects.filter(
+            voter=self.request.user, post=Post.objects.get(pk=self.kwargs["pk"])
+        )
 
     def perform_create(self, serializer):
-        user = self.request.user
-        post = Post.objects.get(pk=self.kwargs["pk"])
         if self.get_queryset().exists():
             raise ValidationError("You have already voted for this post")
-        serializer.save(voter=user, post=post)
+        serializer.save(
+            voter=self.request.user, post=Post.objects.get(pk=self.kwargs["pk"])
+        )
 
     def delete(self, request, *args, **kwargs):
         if self.get_queryset().exists():
