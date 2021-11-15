@@ -2,6 +2,7 @@ from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
 from .models import Post, Vote
 from .serializers import (
     PostsListSerializer,
@@ -66,7 +67,14 @@ class VoteCreateView(generics.CreateAPIView, mixins.DestroyModelMixin):
 
 
 class VotesAnalyticsView(generics.ListAPIView):
+    """
+    Analytics about how many likes was made. API return analytics aggregated by day.
+    """
+
     queryset = Vote.objects.all()
     serializer_class = VotesAnalyticsSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = {"created_at": ["gte", "lte"]}
+
+    def get_queryset(self):
+        return Vote.objects.all().values("created_at").annotate(votes=Count("post"))
