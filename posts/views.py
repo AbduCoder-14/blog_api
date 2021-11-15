@@ -68,7 +68,7 @@ class VoteCreateView(generics.CreateAPIView, mixins.DestroyModelMixin):
 
 class VotesAnalyticsView(generics.ListAPIView):
     """
-    Analytics about how many likes was made. API return analytics aggregated by day.
+    Analytics about how many votes was made. API return analytics aggregated by day.
     """
 
     queryset = Vote.objects.all()
