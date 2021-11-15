@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Post, Vote
-from .filters import VoteAnalyticsFilter
 from .serializers import (
     PostsListSerializer,
     PostSerializer,
@@ -70,4 +69,4 @@ class VotesAnalyticsView(generics.ListAPIView):
     queryset = Vote.objects.all()
     serializer_class = VotesAnalyticsSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VoteAnalyticsFilter
+    filterset_fields = {"created_at": ["gte", "lte"]}
